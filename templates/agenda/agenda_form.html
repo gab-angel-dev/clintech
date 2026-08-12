@@ -1,0 +1,27 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Novo Agendamento — ClinTech{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/agenda.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <a href="{% url 'agenda:agenda' %}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Agenda
+            </a>
+            <h1>Novo Agendamento</h1>
+        </div>
+    </div>
+
+    <div class="page-card agenda-form-card">
+        <div class="card-body" id="form-container">
+            {% include "agenda/partials/_form.html" %}
+        </div>
+    </div>
+
+{% endblock %}

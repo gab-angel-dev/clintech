@@ -1,0 +1,15 @@
+{% for doutor in doutores %}
+<div class="ranking-row">
+    <div class="d-flex justify-content-between mb-1">
+        <span class="ranking-name">{{ doutor.nome }}</span>
+        <span class="ranking-value">{{ doutor.total_agendamentos }}</span>
+    </div>
+    <div class="progress ranking-progress">
+        <div class="progress-bar ranking-progress-bar" role="progressbar"
+             style="width: {% widthratio doutor.total_agendamentos maior 100 %}%;">
+        </div>
+    </div>
+</div>
+{% empty %}
+<p class="text-muted mb-0">Nenhum doutor ativo no período.</p>
+{% endfor %}

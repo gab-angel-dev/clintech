@@ -1,0 +1,187 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Métricas — ClinTech{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <ul class="nav page-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'home:metricas' %}">
+                <i class="bi bi-graph-up"></i> Métricas
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home:custos' %}">
+                <i class="bi bi-currency-dollar"></i> Custos
+            </a>
+        </li>
+    </ul>
+
+    <div class="page-header">
+        <div>
+            <h1>Métricas</h1>
+            <p class="page-subtitle">Visão geral da operação da clínica</p>
+        </div>
+        <button class="btn btn-outline-secondary" onclick="gerarRelatorioPDF()">
+            <i class="bi bi-file-earmark-pdf"></i> Gerar Relatório
+        </button>
+    </div>
+
+    <!-- Filtro de período -->
+    <div class="dashboard-filters">
+        <select id="period-select" class="form-select dashboard-period-select" onchange="onPeriodChange()">
+            <option value="7">7 dias</option>
+            <option value="30" selected>30 dias</option>
+            <option value="90">90 dias</option>
+            <option value="custom">Personalizado</option>
+        </select>
+        <input type="date" id="custom-start" class="form-control d-none dashboard-date-input" onchange="onPeriodChange()">
+        <input type="date" id="custom-end" class="form-control d-none dashboard-date-input" onchange="onPeriodChange()">
+    </div>
+
+    <!-- Cards -->
+    <div id="summary-cards"
+         hx-get="{% url 'home:metricas_summary' %}?period=30"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+    </div>
+
+<!-- Gráficos -->
+    <div class="row g-3 mt-1">
+        <div class="col-lg-7">
+            <div class="page-card chart-card h-100">
+                <h6 class="chart-card-title">Distribuição de procedimentos</h6>
+                <div class="chart-canvas-wrap chart-canvas-wrap-lg">
+                    <canvas id="chart-procedimentos"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 d-flex flex-column gap-3">
+            <div class="page-card chart-card flex-grow-1">
+                <h6 class="chart-card-title">Agendamentos por mês</h6>
+                <div class="chart-canvas-wrap">
+                    <canvas id="chart-agendamentos-mes"></canvas>
+                </div>
+            </div>
+            <div class="page-card chart-card flex-grow-1">
+                <h6 class="chart-card-title">Mensagens por dia</h6>
+                <div class="chart-canvas-wrap">
+                    <canvas id="chart-mensagens-dia"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ranking de doutores -->
+    <div class="page-card chart-card mt-3">
+        <h6 class="chart-card-title">Ranking de doutores</h6>
+        <div id="doctors-ranking"
+             hx-get="{% url 'home:metricas_doctors_ranking' %}?period=30"
+             hx-trigger="load"
+             hx-swap="innerHTML">
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+let chartAgendamentos, chartMensagens, chartProcedimentos;
+
+const CHART_COLORS = {
+    primary: '#0B5D57',
+    primaryDark: '#073F3B',
+    pulse: '#38D9A9',
+    muted: '#5C7075',
+    palette: ['#0B5D57', '#38D9A9', '#B36B1F', '#4A6FA5', '#7A5C9E', '#C0392B'],
+};
+
+function getPeriodParams() {
+    const period = document.getElementById('period-select').value;
+    if (period === 'custom') {
+        const start = document.getElementById('custom-start').value;
+        const end = document.getElementById('custom-end').value;
+        return `period=custom&start=${start}&end=${end}`;
+    }
+    return `period=${period}`;
+}
+
+function onPeriodChange() {
+    const isCustom = document.getElementById('period-select').value === 'custom';
+    document.getElementById('custom-start').classList.toggle('d-none', !isCustom);
+    document.getElementById('custom-end').classList.toggle('d-none', !isCustom);
+
+    if (isCustom && (!document.getElementById('custom-start').value || !document.getElementById('custom-end').value)) {
+        return;
+    }
+
+    const params = getPeriodParams();
+
+    htmx.ajax('GET', `{% url 'home:metricas_summary' %}?${params}`, '#summary-cards');
+    htmx.ajax('GET', `{% url 'home:metricas_doctors_ranking' %}?${params}`, '#doctors-ranking');
+    carregarGraficos(params);
+}
+
+function carregarGraficos(params) {
+    fetch(`{% url 'home:metricas_appointments_by_month' %}`)
+        .then(r => r.json())
+        .then(data => {
+            const ctx = document.getElementById('chart-agendamentos-mes');
+            if (chartAgendamentos) chartAgendamentos.destroy();
+            chartAgendamentos = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.mes),
+                    datasets: [{ label: 'Agendamentos', data: data.map(d => d.total), backgroundColor: CHART_COLORS.primary, borderRadius: 4 }],
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } },
+            });
+        });
+
+    fetch(`{% url 'home:metricas_messages_by_day' %}?${params}`)
+        .then(r => r.json())
+        .then(data => {
+            const ctx = document.getElementById('chart-mensagens-dia');
+            if (chartMensagens) chartMensagens.destroy();
+            chartMensagens = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.dia),
+                    datasets: [
+                        { label: 'Usuário', data: data.map(d => d.usuario), borderColor: CHART_COLORS.primary, tension: 0.3 },
+                        { label: 'IA', data: data.map(d => d.ia), borderColor: CHART_COLORS.pulse, tension: 0.3 },
+                    ],
+                },
+                options: { maintainAspectRatio: false },
+            });
+        });
+
+    fetch(`{% url 'home:metricas_procedures_distribution' %}?${params}`)
+        .then(r => r.json())
+        .then(data => {
+            const ctx = document.getElementById('chart-procedimentos');
+            if (chartProcedimentos) chartProcedimentos.destroy();
+            chartProcedimentos = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.map(d => d.procedimento),
+                    datasets: [{ data: data.map(d => d.total), backgroundColor: CHART_COLORS.palette }],
+                },
+                options: { maintainAspectRatio: false },
+            });
+        });
+}
+
+function gerarRelatorioPDF() {
+    window.location.href = `{% url 'home:metricas_report_pdf' %}?${getPeriodParams()}`;
+}
+
+document.addEventListener('DOMContentLoaded', () => carregarGraficos(getPeriodParams()));
+</script>
+{% endblock %}

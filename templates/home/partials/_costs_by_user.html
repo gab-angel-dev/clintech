@@ -1,0 +1,28 @@
+<div class="table-responsive">
+    <table class="table data-table align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Paciente</th>
+                <th>Interações</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td class="fw-semibold">{{ u.paciente__complete_name|default:u.paciente_id }}</td>
+                <td class="text-muted">{{ u.interacoes }}</td>
+                <td class="text-muted">{{ u.entrada }}</td>
+                <td class="text-muted">{{ u.saida }}</td>
+                <td class="fw-semibold">{{ u.total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center py-4 text-muted">Nenhum consumo no período.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

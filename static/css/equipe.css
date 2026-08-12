@@ -1,0 +1,21 @@
+.admin-row-actions {
+    display: inline-flex;
+    gap: 6px;
+}
+
+/* Switch usando a cor da marca em vez do azul padrão do Bootstrap */
+.admin-status-switch {
+    width: 2.4em;
+    height: 1.3em;
+    cursor: pointer;
+}
+
+.admin-status-switch:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.admin-status-switch:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(11, 93, 87, 0.12);
+}

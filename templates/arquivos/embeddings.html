@@ -1,0 +1,71 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Embeddings{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/arquivos.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <h1>Arquivos</h1>
+            <p class="page-subtitle">Trechos processados e usados pelos agentes de IA</p>
+        </div>
+    </div>
+
+    <ul class="nav page-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'arquivos:arquivos' %}">
+                <i class="bi bi-folder2-open"></i> Arquivos
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'arquivos:embeddings' %}">
+                <i class="bi bi-diagram-3"></i> Embeddings
+            </a>
+        </li>
+    </ul>
+
+    <div class="page-card mt-3">
+        <div class="table-responsive">
+            <table class="table data-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Arquivo de origem</th>
+                        <th>Categoria</th>
+                        <th>Criado em</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for embedding in embeddings %}
+                    <tr>
+                        <td class="fw-semibold">
+                            <i class="bi bi-file-earmark-text text-muted me-1"></i>
+                            {{ embedding.arquivo.nome_arquivo }}
+                        </td>
+                        <td class="text-muted">{{ embedding.categoria|default:"—" }}</td>
+                        <td class="text-muted">{{ embedding.created_at|date:"d/m/Y" }}</td>
+                        <td class="text-end">
+                            <a href="{% url 'arquivos:embedding_info' embedding.pk %}" class="btn btn-light btn-sm">
+                                <i class="bi bi-eye"></i> Ver
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">
+                            <i class="bi bi-diagram-3 display-4 d-block mb-2"></i>
+                            Nenhum embedding gerado
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

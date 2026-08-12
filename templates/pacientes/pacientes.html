@@ -1,0 +1,43 @@
+{% extends 'home.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pacientes.css' %}">
+{% endblock %}
+
+{% block title %}Pacientes{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <h1>Pacientes</h1>
+            <p class="page-subtitle">Gerencie os pacientes atendidos pela clínica</p>
+        </div>
+        <a href="{% url 'pacientes:novo_paciente' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Novo Paciente
+        </a>
+    </div>
+
+    <div class="card page-card">
+        <div class="card-header page-card-header">
+            <div class="input-group patient-search">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text"
+                       name="q"
+                       class="form-control"
+                       placeholder="Buscar por nome ou telefone"
+                       hx-get="{% url 'pacientes:listar_pacientes' %}"
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-swap="outerHTML"
+                       hx-target="#lista-pacientes">
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            {% include 'pacientes/partials/listar_pacientes.html' %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Chat de Conversas{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container d-flex">
+
+    <!-- COLUNA ESQUERDA: lista de pacientes -->
+    <div class="chat-sidebar">
+        <div class="chat-sidebar-header">
+            <h6 class="mb-1">Usuários</h6>
+            <small class="text-muted">{{ pacientes|length }} conversa(s)</small>
+        </div>
+
+        <div class="chat-sidebar-search">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text"
+                       name="q"
+                       class="form-control"
+                       placeholder="Buscar usuário..."
+                       hx-get="{% url 'chat:buscar_pacientes' %}"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-target="#lista-conversas"
+                       hx-swap="innerHTML">
+            </div>
+        </div>
+
+        <div id="lista-conversas" class="chat-conversation-list">
+            {% include 'chat/partials/lista_conversas.html' %}
+        </div>
+    </div>
+
+    <!-- COLUNA DIREITA: conversa aberta -->
+    <div class="chat-main">
+        {% if paciente_selecionado %}
+
+            <!-- Header da conversa -->
+            <div class="chat-header">
+                <div class="d-flex align-items-center">
+                    <div class="chat-avatar chat-avatar-lg me-2">
+                        {{ paciente_selecionado.complete_name|slice:":2"|upper|default:"?" }}
+                    </div>
+                    <div>
+                        <strong>{{ paciente_selecionado.complete_name|default:"Sem nome" }}</strong><br>
+                        <small class="text-muted">
+                            {{ paciente_selecionado.phone_number }} · {{ mensagens|length }} mensagens
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch"
+                           id="toggle-atendimento"
+                           hx-post="{% url 'chat:toggle_atendimento' paciente_selecionado.phone_number %}"
+                           hx-target="#area-input"
+                           hx-swap="innerHTML"
+                           {% if paciente_selecionado.require_human %}checked{% endif %}>
+                    <label class="form-check-label" for="toggle-atendimento">
+                        Atendimento humano
+                    </label>
+                </div>
+            </div>
+
+            <!-- Corpo das mensagens (com polling) -->
+            <div class="chat-messages" id="lista-mensagens"
+                 hx-get="{% url 'chat:novas_mensagens' paciente_selecionado.phone_number %}"
+                 hx-trigger="every 10s"
+                 hx-vals='js:{ultima_id: document.getElementById("ultima-mensagem-id").value}'
+                 hx-swap="beforeend">
+                {% include 'chat/partials/mensagens.html' %}
+            </div>
+
+            <input type="hidden" id="ultima-mensagem-id" value="{{ mensagens.last.id|default:0 }}">
+
+            <!-- Input de envio -->
+            <div class="chat-input-area" id="area-input">
+                {% include 'chat/partials/input_mensagem.html' %}
+            </div>
+
+        {% else %}
+            <div class="chat-empty-state">
+                <i class="bi bi-chat-square-text display-4 d-block mb-2"></i>
+                Selecione uma conversa para começar
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

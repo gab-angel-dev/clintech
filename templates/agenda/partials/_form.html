@@ -1,0 +1,158 @@
+<form hx-post="{% url 'agenda:create' %}"
+      hx-target="#form-container"
+      hx-swap="innerHTML"
+      id="agendamento-form">
+    {% csrf_token %}
+
+    {% if erro_negocio %}
+        <div class="alert alert-danger">
+            {% for erro in erro_negocio %}<p class="mb-0">{{ erro }}</p>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <!-- Paciente (autocomplete + hidden FK) -->
+    <div class="mb-3">
+        <label class="form-label">Paciente *</label>
+        <input type="text"
+               id="paciente-display"
+               name="q"
+               placeholder="Buscar por nome ou telefone..."
+               autocomplete="off"
+               hx-get="{% url 'agenda:patient_search' %}"
+               hx-trigger="keyup changed delay:300ms"
+               hx-target="#paciente-results"
+               hx-swap="innerHTML"
+               class="form-control">
+
+        {{ form.paciente }}
+
+        <div id="paciente-results" class="agenda-search-results"></div>
+
+        {% if form.paciente.errors %}
+            <div class="invalid-feedback d-block">{{ form.paciente.errors.0 }}</div>
+        {% endif %}
+
+        <div id="paciente-selecionado"
+             class="agenda-selected-patient {% if not form.paciente.value %}d-none{% endif %}">
+            <i class="bi bi-person-check"></i>
+            <span id="paciente-selecionado-nome"></span>
+            <button type="button" onclick="limparPaciente()" class="agenda-clear-patient">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Doutor -->
+    <div class="mb-3">
+        <label class="form-label">Doutor *</label>
+        {{ form.doutor }}
+        {% if form.doutor.errors %}
+            <div class="invalid-feedback d-block">{{ form.doutor.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.querySelector('[name=doutor]').setAttribute('hx-get', "{% url 'agenda:procedimento_convenio' %}");
+        document.querySelector('[name=doutor]').setAttribute('hx-trigger', 'change');
+        document.querySelector('[name=doutor]').setAttribute('hx-target', '#procedimento-convenio-container');
+        document.querySelector('[name=doutor]').setAttribute('hx-include', '[name=doutor],[name=paciente]');
+        htmx.process(document.querySelector('[name=doutor]'));
+    </script>
+
+    <!-- Procedimento + Convênio -->
+    <div id="procedimento-convenio-container" class="mb-3">
+        {% if form.doutor.value %}
+            {% include "agenda/partials/_procedimento_convenio.html" %}
+        {% else %}
+            <p class="text-muted small mb-0">Selecione um doutor para ver os procedimentos.</p>
+        {% endif %}
+    </div>
+
+    <!-- Data/hora -->
+    <div class="row mb-3">
+        <div class="col-6">
+            <label class="form-label">Início *</label>
+            {{ form.start_time }}
+            {% if form.start_time.errors %}
+                <div class="invalid-feedback d-block">{{ form.start_time.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="col-6">
+            <label class="form-label">Fim *</label>
+            {{ form.end_time }}
+            {% if form.end_time.errors %}
+                <div class="invalid-feedback d-block">{{ form.end_time.errors.0 }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Verificar disponibilidade -->
+    <div class="mb-3">
+        <button type="button"
+                hx-get="{% url 'agenda:availability' %}"
+                hx-target="#availability-result"
+                hx-swap="innerHTML"
+                hx-include="[name=start_time],[name=end_time],[name=doutor]"
+                class="btn btn-outline-secondary w-100">
+            <i class="bi bi-calendar-check"></i> Verificar disponibilidade
+        </button>
+        <div id="availability-result" class="mt-2"></div>
+    </div>
+
+    <!-- Observações -->
+    <div class="mb-3">
+        <label class="form-label">Observações</label>
+        {{ form.observacoes }}
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg"></i> Confirmar agendamento
+        </button>
+    </div>
+</form>
+
+<script>
+function selectPatient(pk, nome) {
+    document.querySelector('[name=paciente]').value = pk;
+    document.getElementById('paciente-display').value = nome;
+    document.getElementById('paciente-results').innerHTML = '';
+    document.getElementById('paciente-selecionado-nome').textContent = nome;
+    document.getElementById('paciente-selecionado').classList.remove('d-none');
+
+    const doutorSelect = document.querySelector('[name=doutor]');
+    if (doutorSelect.value) {
+        htmx.trigger(doutorSelect, 'change');
+    }
+}
+function limparPaciente() {
+    document.querySelector('[name=paciente]').value = '';
+    document.getElementById('paciente-display').value = '';
+    document.getElementById('paciente-selecionado').classList.add('d-none');
+}
+function atualizarFimAutomatico() {
+    const procedimentoSelect = document.getElementById('id_procedimento');
+    const startInput = document.querySelector('[name=start_time]');
+    const endInput = document.querySelector('[name=end_time]');
+
+    const opcaoSelecionada = procedimentoSelect?.options[procedimentoSelect.selectedIndex];
+    const duracaoMin = parseInt(opcaoSelecionada?.dataset.duracao || '0', 10);
+
+    if (!duracaoMin || !startInput.value) return;
+
+    const inicio = new Date(startInput.value);
+    const fim = new Date(inicio.getTime() + duracaoMin * 60000);
+
+    const pad = (n) => String(n).padStart(2, '0');
+    const fimFormatado =
+        `${fim.getFullYear()}-${pad(fim.getMonth() + 1)}-${pad(fim.getDate())}` +
+        `T${pad(fim.getHours())}:${pad(fim.getMinutes())}`;
+
+    endInput.value = fimFormatado;
+}
+
+document.querySelector('[name=start_time]').addEventListener('change', atualizarFimAutomatico);
+</script>

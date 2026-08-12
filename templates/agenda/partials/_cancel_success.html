@@ -1,0 +1,8 @@
+<div data-success="true" class="p-4 text-center">
+    <i class="bi bi-check-circle-fill agenda-success-icon"></i>
+    <h5 class="mb-2 mt-2">Consulta cancelada</h5>
+    <p class="text-muted mb-0">
+        {{ agendamento.procedimento.nome }} — {{ agendamento.doutor.nome }}<br>
+        {{ agendamento.start_time|date:"d/m/Y" }} às {{ agendamento.start_time|date:"H:i" }}
+    </p>
+</div>

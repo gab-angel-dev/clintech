@@ -1,0 +1,5 @@
+{% for msg in mensagens %}
+    {% include 'chat/partials/mensagem_unica.html' %}
+{% endfor %}
+
+<input type="hidden" id="ultima-mensagem-id" value="{{ mensagens.last.id }}" hx-swap-oob="true">

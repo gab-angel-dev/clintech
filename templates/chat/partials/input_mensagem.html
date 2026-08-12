@@ -1,0 +1,21 @@
+{% if paciente_selecionado.require_human %}
+    <form hx-post="{% url 'chat:enviar_mensagem' paciente_selecionado.phone_number %}"
+          hx-target="#lista-mensagens"
+          hx-swap="beforeend"
+          hx-on::after-request="this.reset()"
+          class="chat-send-form">
+        {% csrf_token %}
+        <textarea name="mensagem"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Digite sua mensagem... (Enter para enviar)"></textarea>
+        <button type="submit" class="btn btn-primary btn-sm mt-2">
+            <i class="bi bi-send"></i> Enviar
+        </button>
+    </form>
+{% else %}
+    <div class="chat-ia-notice">
+        <i class="bi bi-robot"></i>
+        A IA está respondendo automaticamente. Ative "Atendimento humano" para enviar mensagens manualmente.
+    </div>
+{% endif %}

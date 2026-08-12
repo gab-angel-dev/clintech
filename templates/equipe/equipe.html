@@ -1,0 +1,50 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Equipe{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/equipe.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <h1>Equipe</h1>
+            <p class="page-subtitle">{{ admins|length }} administradores cadastrados</p>
+        </div>
+        <a href="{% url 'equipe:admin_novo' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Novo Administrador
+        </a>
+    </div>
+
+    <div class="page-card">
+        <div class="table-responsive">
+            <table class="table data-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Email</th>
+                        <th>Criado em</th>
+                        <th>Status</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body">
+                    {% for adm in admins %}
+                        {% include 'equipe/partials/admin_row.html' %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-person-badge display-4 d-block mb-2"></i>
+                            Nenhum admin cadastrado
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

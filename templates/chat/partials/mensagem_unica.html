@@ -1,0 +1,17 @@
+{% if msg.message.type == 'human' %}
+    <div class="chat-bubble-row chat-bubble-row-left">
+        <div class="chat-bubble chat-bubble-human">
+            <div>{{ msg.message.content }}</div>
+            <small class="chat-bubble-time">{{ msg.created_at|date:"H:i" }}</small>
+        </div>
+    </div>
+{% else %}
+    <div class="chat-bubble-row chat-bubble-row-right">
+        <div class="chat-bubble chat-bubble-agent">
+            <div>{{ msg.message.content }}</div>
+            <small class="chat-bubble-time">
+                {% if msg.agent_name %}{{ msg.agent_name }} · {% endif %}{{ msg.created_at|date:"H:i" }}
+            </small>
+        </div>
+    </div>
+{% endif %}

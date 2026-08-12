@@ -1,0 +1,21 @@
+{% if pacientes %}
+    <div class="list-group agenda-search-list">
+        {% for paciente in pacientes %}
+            <button type="button"
+                    onclick="selectPatient('{{ paciente.phone_number }}', '{{ paciente.complete_name|default:paciente.phone_number }}')"
+                    class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                <i class="bi bi-person text-muted"></i>
+                <div class="text-start">
+                    {% if paciente.complete_name %}
+                        <div class="fw-semibold">{{ paciente.complete_name }}</div>
+                        <small class="text-muted">{{ paciente.phone_number }}</small>
+                    {% else %}
+                        <div class="fw-semibold">{{ paciente.phone_number }}</div>
+                    {% endif %}
+                </div>
+            </button>
+        {% endfor %}
+    </div>
+{% elif request.GET.q %}
+    <p class="text-muted small px-1 py-2 mb-0">Nenhum paciente encontrado.</p>
+{% endif %}

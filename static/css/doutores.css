@@ -1,0 +1,172 @@
+/* ---- Grid de cards de doutores ---- */
+.doctor-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.doctor-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.doctor-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+/* Paleta de avatares — variações harmônicas com o teal da marca,
+   evita repetir sempre a mesma cor quando há vários doutores */
+.doctor-avatar-1 { background-color: var(--color-primary); }
+.doctor-avatar-2 { background-color: #B36B1F; }
+.doctor-avatar-3 { background-color: #4A6FA5; }
+.doctor-avatar-4 { background-color: #7A5C9E; }
+.doctor-avatar-5 { background-color: #2E8B7C; }
+
+.doctor-title {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.doctor-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    margin: 0;
+    color: var(--color-ink);
+}
+
+.doctor-phone {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-ink-muted);
+    margin: 0;
+}
+
+.doctor-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.doctor-status i {
+    font-size: 0.5rem;
+}
+
+.doctor-status-active {
+    background-color: rgba(56, 217, 169, 0.18);
+    color: var(--color-primary-dark);
+}
+
+.doctor-status-inactive {
+    background-color: rgba(92, 112, 117, 0.12);
+    color: var(--color-ink-muted);
+}
+
+.doctor-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.doctor-section-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.doctor-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.doctor-tag {
+    background-color: rgba(11, 93, 87, 0.08);
+    color: var(--color-primary-dark);
+    font-size: 0.76rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.doctor-tag-muted {
+    background-color: var(--color-bg);
+    color: var(--color-ink-muted);
+    border: 1px solid var(--color-border);
+}
+
+.doctor-tag-empty {
+    font-size: 0.78rem;
+    color: var(--color-ink-muted);
+    font-style: italic;
+}
+
+.doctor-days {
+    display: flex;
+    gap: 4px;
+}
+
+.doctor-day {
+    width: 30px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    border-radius: 6px;
+    background-color: var(--color-bg);
+}
+
+.doctor-day-active {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.doctor-card-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+}
+
+.doctor-toggle-btn {
+    flex-shrink: 0;
+    width: 38px;
+}
+
+
+/* ---- Formulário de doutor (usa .form-card já criado em pacientes.css) ---- */
+.horario-trabalho-group {
+    background-color: var(--color-bg);
+    border-color: var(--color-border) !important;
+}

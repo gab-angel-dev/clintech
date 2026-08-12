@@ -1,0 +1,640 @@
+/* ============================================
+   base.css — fundação do projeto
+   Aqui ficam: reset, variáveis globais (tokens)
+   e estilos que valem para o site inteiro.
+   ============================================ */
+
+/* Importa as fontes do Google Fonts.
+   @import precisa ser a primeira coisa no arquivo. */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+/* --------------------------------------------
+   CUSTOM PROPERTIES (variáveis CSS)
+   Definidas em :root ficam disponíveis em
+   qualquer seletor do site via var(--nome).
+   Isso é ótimo pra manter consistência: se você
+   mudar a cor aqui, muda no site inteiro.
+   -------------------------------------------- */
+:root {
+    /* Cores - paleta "clínica", teal profundo em vez do azul genérico de SaaS */
+    --color-bg: #F4F8F7;
+    --color-surface: #FFFFFF;
+    --color-ink: #10242B;          /* texto principal */
+    --color-ink-muted: #5C7075;    /* texto secundário */
+    --color-primary: #0B5D57;      /* teal escuro - marca */
+    --color-primary-dark: #073F3B; /* hover/active do primary */
+    --color-pulse: #38D9A9;        /* verde "monitor", usado só no detalhe de assinatura */
+    --color-border: #DCE6E4;
+    --color-danger: #C0392B;
+
+    /* Tipografia */
+    --font-display: 'Space Grotesk', sans-serif; /* títulos: geométrica, técnica */
+    --font-body: 'IBM Plex Sans', sans-serif;     /* texto/inputs: legível */
+    --font-mono: 'IBM Plex Mono', monospace;      /* rótulos pequenos, dado técnico */
+
+    /* Formas */
+    --radius-card: 20px;
+    --radius-input: 10px;
+
+    /* Sombra do card - suave, colorida (não cinza puro),
+       reforça a cor de marca mesmo na sombra */
+    --shadow-card: 0 20px 60px -20px rgba(11, 93, 87, 0.25),
+                   0 2px 8px rgba(11, 93, 87, 0.06);
+}
+
+/* --------------------------------------------
+   RESET básico
+   box-sizing: border-box faz padding/border
+   entrarem DENTRO da largura declarada, em vez
+   de somar a ela. Sem isso, todo cálculo de
+   layout vira uma dor de cabeça.
+   -------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    /* Deixa o zoom do usuário/acessibilidade funcionar bem */
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background-color: var(--color-bg);
+
+    /* Fundo com grade de pontos discreta, lembrando papel
+       milimetrado de exame clínico. É um repeating-image,
+       não uma imagem de verdade - só gradientes. */
+    background-image: radial-gradient(circle, rgba(11, 93, 87, 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-display);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Foco visível para quem navega por teclado.
+   :focus-visible só aparece no teclado (não no clique do mouse),
+   então não "suja" visualmente pra quem usa mouse. */
+:focus-visible {
+    outline: 2px solid var(--color-pulse);
+    outline-offset: 2px;
+}
+
+/* Respeita quem pediu menos animação no sistema operacional */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================
+   LAYOUT — sidebar retrátil (estilo Claude)
+   ============================================ */
+
+:root {
+    --sidebar-w: 248px;
+    --sidebar-w-collapsed: 68px;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background-color: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    padding: 16px 12px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: width 0.18s ease;
+    z-index: 1020;
+}
+
+.sidebar.is-collapsed {
+    width: var(--sidebar-w-collapsed);
+}
+
+/* Cabeçalho: logo + botão de recolher */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px 16px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-primary);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar-brand i {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.sidebar-toggle {
+    background: transparent;
+    border: none;
+    color: var(--color-ink-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+}
+
+.sidebar-toggle:hover {
+    background-color: rgba(11, 93, 87, 0.08);
+    color: var(--color-primary);
+}
+
+/* Quando colapsada, esconde o texto da marca e centraliza o toggle */
+.sidebar.is-collapsed .sidebar-header {
+    justify-content: center;
+}
+
+.sidebar.is-collapsed .sidebar-brand span,
+.sidebar.is-collapsed .perfil-info,
+.sidebar.is-collapsed .sidebar-link span,
+.sidebar.is-collapsed .logout-link span {
+    display: none;
+}
+
+/* --- Links --- */
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 10px;
+    border-radius: var(--radius-input);
+    color: var(--color-ink-muted);
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(11, 93, 87, 0.08);
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.sidebar-link.active {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.sidebar-link i {
+    font-size: 1.05rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar.is-collapsed .sidebar-link {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+/* --- Rodapé (perfil + logout) --- */
+.baseboard {
+    border-top: 1px solid var(--color-border);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.perfil {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: var(--radius-input);
+    overflow: hidden;
+}
+
+.perfil-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.perfil-info {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.perfil-info strong {
+    display: block;
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+
+.perfil-info small {
+    display: block;
+    color: var(--color-ink-muted);
+    font-size: 0.72rem;
+}
+
+.sidebar.is-collapsed .perfil {
+    justify-content: center;
+}
+
+.logout-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: var(--radius-input);
+    color: var(--color-danger);
+    font-size: 0.88rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.logout-link:hover {
+    background-color: rgba(192, 57, 43, 0.08);
+    color: var(--color-danger);
+    text-decoration: none;
+}
+
+.sidebar.is-collapsed .logout-link {
+    justify-content: center;
+    padding: 8px 0;
+}
+
+/* --- Conteúdo --- */
+.content {
+    flex-grow: 1;
+    padding: 32px;
+    min-width: 0;
+}
+
+/* --- Mobile: sidebar vira overlay fixo, começa colapsada --- */
+@media (max-width: 767.98px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        box-shadow: var(--shadow-card);
+    }
+    .content {
+        padding: 20px;
+        margin-left: var(--sidebar-w-collapsed);
+    }
+}
+
+/* ============================================
+   BOTÕES — sobrescreve o azul padrão do Bootstrap
+   pela paleta da marca
+   ============================================ */
+
+.btn {
+    font-weight: 500;
+    border-radius: var(--radius-input);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--color-primary-dark) !important;
+    border-color: var(--color-primary-dark) !important;
+}
+
+.btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #fff !important;
+}
+
+.btn-outline-danger {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.btn-outline-danger:hover,
+.btn-outline-danger:focus,
+.btn-outline-danger:active {
+    background-color: var(--color-danger) !important;
+    border-color: var(--color-danger) !important;
+    color: #fff !important;
+}
+
+.btn-outline-secondary {
+    color: var(--color-ink-muted);
+    border-color: var(--color-border);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--color-ink-muted) !important;
+    border-color: var(--color-ink-muted) !important;
+    color: #fff !important;
+}
+
+/* Links de texto simples (ex: dentro de tabelas) também seguem a marca */
+a.text-primary,
+.text-primary {
+    color: var(--color-primary) !important;
+}
+
+
+/* ============================================
+   FORMULÁRIOS — estilo para campos gerados
+   pelo django-crispy-forms (bootstrap5 pack)
+   ============================================ */
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-ink);
+    margin-bottom: 6px;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-input);
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    background-color: var(--color-bg);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(11, 93, 87, 0.12);
+    background-color: var(--color-surface);
+}
+
+/* Cada campo (crispy embrulha em <div class="mb-3">) ganha respiro maior */
+.form-card form > div,
+.form-card fieldset > div {
+    margin-bottom: 20px !important;
+}
+
+/* Texto de ajuda abaixo do campo */
+.form-text {
+    color: var(--color-ink-muted);
+    font-size: 0.78rem;
+}
+
+/* Mensagens de erro de validação */
+.invalid-feedback {
+    color: var(--color-danger);
+    font-size: 0.8rem;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--color-danger);
+}
+
+/* Checkbox/radio */
+.form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.form-check-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(11, 93, 87, 0.12);
+}
+
+/* ============================================
+   PADRÕES DE PÁGINA — reutilizados em Pacientes,
+   Doutores, Procedimentos, Agenda, Equipe...
+   ============================================ */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.page-subtitle {
+    color: var(--color-ink-muted);
+    font-size: 0.9rem;
+    margin: 2px 0 0;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-ink-muted);
+    margin-bottom: 6px;
+}
+
+.back-link:hover {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+/* Card genérico usado em telas de listagem (tabela) e formulário */
+.page-card,
+.form-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.page-card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--color-border);
+    padding: 16px 20px;
+}
+
+.form-card .card-body {
+    padding: 28px;
+}
+
+/* Tabela padrão de listagem */
+.data-table {
+    margin-bottom: 0;
+}
+
+.data-table thead th {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-muted);
+    border-bottom: 1px solid var(--color-border);
+    padding: 12px 16px;
+    font-weight: 500;
+    background-color: var(--color-bg);
+}
+
+.data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-ink);
+    vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tbody tr:hover {
+    background-color: rgba(11, 93, 87, 0.04);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.status-badge i {
+    font-size: 0.5rem;
+}
+
+.status-badge-active {
+    background-color: rgba(56, 217, 169, 0.18);
+    color: var(--color-primary-dark);
+}
+
+.status-badge-inactive {
+    background-color: rgba(92, 112, 117, 0.12);
+    color: var(--color-ink-muted);
+}
+
+/* ---- Sub-navegação em abas (Arquivos/Embeddings, Métricas/Custos, etc.) ---- */
+.page-tabs {
+    border-bottom: 1px solid var(--color-border);
+    gap: 4px;
+}
+
+.page-tabs .nav-link {
+    color: var(--color-ink-muted);
+    font-weight: 500;
+    font-size: 0.88rem;
+    padding: 10px 16px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-tabs .nav-link:hover {
+    color: var(--color-primary);
+}
+
+.page-tabs .nav-link.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    background: transparent;
+}
+
+/* ---- Estado vazio padrão — usar fora de qualquer .row/grid ---- */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--color-ink-muted);
+}
+
+.empty-state i {
+    font-size: 8rem;
+    margin-bottom: 12px;
+    opacity: 0.8;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 1rem;
+}

@@ -1,0 +1,32 @@
+<div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-3">
+    <div class="col">
+        <div class="metric-card metric-card-sm">
+            <h4 class="metric-value-sm">{{ total_tokens }}</h4>
+            <p class="metric-label">Total Tokens</p>
+        </div>
+    </div>
+    <div class="col">
+        <div class="metric-card metric-card-sm">
+            <h4 class="metric-value-sm">{{ input_tokens }}</h4>
+            <p class="metric-label">Tokens Entrada</p>
+        </div>
+    </div>
+    <div class="col">
+        <div class="metric-card metric-card-sm">
+            <h4 class="metric-value-sm">{{ output_tokens }}</h4>
+            <p class="metric-label">Tokens Saída</p>
+        </div>
+    </div>
+    <div class="col">
+        <div class="metric-card metric-card-sm">
+            <h4 class="metric-value-sm">${{ estimated_cost_usd }}</h4>
+            <p class="metric-label">Custo (USD)</p>
+        </div>
+    </div>
+    <div class="col">
+        <div class="metric-card metric-card-sm">
+            <h4 class="metric-value-sm">R${{ estimated_cost_brl }}</h4>
+            <p class="metric-label">câmbio {{ exchange_rate }}</p>
+        </div>
+    </div>
+</div>

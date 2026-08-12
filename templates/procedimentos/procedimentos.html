@@ -1,0 +1,72 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Procedimentos{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/procedimentos.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <h1>Procedimentos</h1>
+            <p class="page-subtitle">{{ procedimentos|length }} procedimentos cadastrados</p>
+        </div>
+        <a href="{% url 'procedimentos:novo_procedimento' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Novo Procedimento
+        </a>
+    </div>
+
+    <div class="page-card">
+        <div class="table-responsive">
+            <table class="table data-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Status</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in procedimentos %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'procedimentos:visualizar_procedimento' p.pk %}"
+                               class="fw-semibold text-decoration-none text-body">
+                                {{ p.nome }}
+                            </a>
+                        </td>
+                        <td class="text-muted">
+                            {{ p.descricao|default:"—"|truncatechars:80 }}
+                        </td>
+                        <td>
+                            {% if p.ativo %}
+                                <span class="status-badge status-badge-active"><i class="bi bi-circle-fill"></i> Ativo</span>
+                            {% else %}
+                                <span class="status-badge status-badge-inactive"><i class="bi bi-circle-fill"></i> Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'procedimentos:visualizar_procedimento' p.pk %}"
+                               class="btn btn-light btn-sm">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">
+                            <i class="bi bi-bandaid display-4 d-block mb-2"></i>
+                            Nenhum procedimento cadastrado
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

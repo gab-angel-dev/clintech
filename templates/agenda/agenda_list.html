@@ -1,0 +1,146 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Agenda — ClinTech{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/agenda.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <h1>Agenda</h1>
+            <p id="event-count" class="page-subtitle">Carregando agendamentos...</p>
+        </div>
+        <a href="{% url 'agenda:create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Novo agendamento
+        </a>
+    </div>
+
+    <div class="agenda-toolbar">
+        <div class="btn-group">
+            <button type="button" onclick="setView('dayGridMonth')" id="btn-month" class="btn btn-outline-secondary active">Mensal</button>
+            <button type="button" onclick="setView('timeGridWeek')" id="btn-week" class="btn btn-outline-secondary">Semanal</button>
+        </div>
+
+        <div class="btn-group">
+            <button type="button" onclick="calendar.prev()" class="btn btn-outline-secondary"><i class="bi bi-chevron-left"></i></button>
+            <button type="button" onclick="calendar.today()" class="btn btn-outline-secondary">Hoje</button>
+            <button type="button" onclick="calendar.next()" class="btn btn-outline-secondary"><i class="bi bi-chevron-right"></i></button>
+        </div>
+
+        <span id="cal-title" class="agenda-cal-title text-capitalize"></span>
+        <div id="doctor-legend" class="agenda-legend"></div>
+
+        <select id="filter-doctor" onchange="filterByDoctor(this.value)" class="form-select agenda-doctor-filter">
+            <option value="">Todos os doutores</option>
+            {% for doutor in doutores %}
+                <option value="{{ doutor.id }}">{{ doutor.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="page-card agenda-calendar-card">
+        <div id="calendar"></div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.11/locales/pt-br.global.min.js"></script>
+
+<!-- Modal de detalhe do evento — Bootstrap 5 nativo -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" id="event-modal-content">
+      <!-- preenchido via HTMX -->
+    </div>
+  </div>
+</div>
+
+<script>
+const DOCTOR_COLORS = ["#0B5D57","#B36B1F","#4A6FA5","#7A5C9E","#2E8B7C","#C0392B","#38D9A9","#073F3B"];
+function doctorColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return DOCTOR_COLORS[Math.abs(hash) % DOCTOR_COLORS.length];
+}
+
+let currentDoctor = "";
+function filterByDoctor(value) { currentDoctor = value; calendar.refetchEvents(); updateLegend(); }
+
+function setView(view) {
+  calendar.changeView(view);
+  document.getElementById("btn-month").classList.toggle("active", view === "dayGridMonth");
+  document.getElementById("btn-week").classList.toggle("active", view === "timeGridWeek");
+}
+
+function updateLegend(events) {
+  const legend = document.getElementById("doctor-legend");
+  if (!events || currentDoctor) { legend.innerHTML = ""; return; }
+  const unique = [...new Set(events.map(e => e.extendedProps.dr_responsible))];
+  legend.innerHTML = unique.slice(0, 4).map(dr => `
+    <span class="agenda-legend-item"><span class="agenda-legend-dot" style="background:${doctorColor(dr)};"></span>${dr.split(" ")[0]}</span>
+  `).join("");
+}
+
+const calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+  locale: "pt-br",
+  initialView: "dayGridMonth",
+  headerToolbar: false,
+  height: "auto",
+  eventDisplay: "block",
+
+  events: function(info, successCallback, failureCallback) {
+    const params = new URLSearchParams({
+      start: info.startStr.slice(0, 10),
+      end: info.endStr.slice(0, 10),
+    });
+    if (currentDoctor) params.set("doutor", currentDoctor);
+
+    fetch(`{% url 'agenda:events' %}?${params}`)
+      .then(r => r.json())
+      .then(data => {
+        const colored = data.map(ev => ({
+          ...ev,
+          backgroundColor: doctorColor(ev.extendedProps.dr_responsible),
+          borderColor: "transparent",
+          textColor: "#fff",
+        }));
+        document.getElementById("event-count").textContent =
+          `${data.length} agendamento${data.length !== 1 ? "s" : ""} no período`;
+        updateLegend(data);
+        successCallback(colored);
+      })
+      .catch(failureCallback);
+  },
+
+  eventClick: function(info) {
+    const modalEl = document.getElementById('eventModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+    htmx.ajax("GET", `/agenda/${info.event.extendedProps.event_id}/detalhe/`, "#event-modal-content");
+  },
+
+  datesSet: function(info) {
+    document.getElementById("cal-title").textContent = calendar.view.title;
+  },
+});
+calendar.render();
+
+document.addEventListener("htmx:afterSwap", function(e) {
+  if (e.detail.target.id === "event-modal-content") {
+    calendar.refetchEvents();
+    if (e.detail.target.querySelector("[data-success]")) {
+      setTimeout(() => {
+        const modalEl = document.getElementById('eventModal');
+        bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+      }, 1200);
+    }
+  }
+});
+</script>
+{% endblock %}

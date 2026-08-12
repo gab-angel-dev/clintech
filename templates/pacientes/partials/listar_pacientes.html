@@ -1,0 +1,85 @@
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pacientes.css' %}">
+{% endblock %}
+
+<div class="table-responsive" id="lista-pacientes">
+    <table class="table patient-table align-middle mb-0">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Status</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paciente in pacientes %}
+            <tr class="patient-row">
+                <td class="patient-avatar-cell">
+                    <a href="{% url 'pacientes:visualizar_paciente' paciente.phone_number %}"
+                       class="patient-avatar" title="Ver detalhes">
+                        {% if paciente.complete_name %}
+                            {{ paciente.complete_name|first|upper }}
+                        {% else %}
+                            <i class="bi bi-person"></i>
+                        {% endif %}
+                    </a>
+                </td>
+
+                <td>
+                    <a href="{% url 'pacientes:visualizar_paciente' paciente.phone_number %}"
+                       class="patient-name-link">
+                        {% if paciente.complete_name %}
+                            {{ paciente.complete_name }}
+                        {% else %}
+                            <span class="text-muted fst-italic">Sem nome</span>
+                        {% endif %}
+                    </a>
+                </td>
+
+                <td class="patient-phone">{{ paciente.phone_number }}</td>
+
+                <td>
+                    {% if paciente.require_human %}
+                        <span class="patient-badge patient-badge-human">
+                            <i class="bi bi-person-raised-hand"></i> Humano
+                        </span>
+                    {% else %}
+                        <span class="patient-badge patient-badge-ia">
+                            <i class="bi bi-robot"></i> IA
+                        </span>
+                    {% endif %}
+                </td>
+
+                <td class="text-end">
+                    <div class="patient-actions">
+                        <a href="{% url 'chat:conversa' paciente.phone_number %}" class="btn btn-outline-primary btn-sm">
+                            <!-- IMPLEMENTAR DEPOIS DE CRIAR O CHAT -->
+                            <i class="bi bi-chat-dots"></i> Chat
+                        </a>
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                hx-delete="{% url 'pacientes:deletar_paciente' paciente.phone_number %}"
+                                hx-target="closest tr"
+                                hx-swap="outerHTML"
+                                hx-confirm="Tem certeza que deseja excluir esse paciente?">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center py-5 text-muted">
+                    <i class="bi bi-people display-4 d-block mb-2"></i>
+                    Nenhum paciente cadastrado
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

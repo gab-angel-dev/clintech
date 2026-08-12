@@ -1,0 +1,194 @@
+/* ============================================
+   auth.css — telas de login e cadastro
+   Usa as variáveis definidas em base.css
+   ============================================ */
+
+/* --------------------------------------------
+   .auth-page = a tag <main> inteira
+   Flexbox é o jeito moderno de centralizar
+   coisas. display:flex transforma os FILHOS
+   diretos em itens flexíveis.
+   -------------------------------------------- */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;  /* título em cima, card embaixo */
+    align-items: center;     /* centraliza no eixo horizontal */
+    justify-content: center; /* centraliza no eixo vertical */
+    gap: 2rem;
+    padding: 2rem 1.5rem;    /* respiro nas laterais em telas pequenas */
+}
+
+.auth-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.4rem); /* cresce com a tela, mas com limites */
+    color: var(--color-primary-dark);
+    letter-spacing: -0.02em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* ::before injeta conteúdo ANTES do texto do elemento,
+   sem precisar criar uma tag nova no HTML.
+   Aqui vira um "olho de marca" acima do nome do site. */
+.auth-title::before {
+    content: "SISTEMA DE GESTÃO CLÍNICA";
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--color-pulse);
+}
+
+/* --------------------------------------------
+   .auth-card
+   -------------------------------------------- */
+.auth-card {
+    position: relative;   /* necessário para o ::before de posição absoluta funcionar */
+    overflow: hidden;      /* corta a linha de ECG nas bordas arredondadas */
+    width: 100%;
+    max-width: 420px;
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 3.5rem 2rem 2rem; /* mais espaço no topo p/ a linha de ECG */
+}
+
+/* --- Elemento de assinatura: monitor cardíaco no topo do card ---
+   Técnica: um SVG (a forma da onda) vira o background-image do
+   pseudo-elemento, repetido na horizontal (repeat-x), e depois
+   animamos a posição do background pra criar a sensação de que
+   a onda está "andando", como um monitor de hospital de verdade.
+   Nenhuma imagem externa, nenhum JavaScript. */
+.auth-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='36' viewBox='0 0 120 36'%3E%3Cpath d='M0 18 L30 18 L38 18 L42 3 L48 33 L54 10 L60 18 L120 18' fill='none' stroke='%2338D9A9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 120px 36px;
+    animation: pulse-scroll 2.6s linear infinite;
+    opacity: 0.9;
+}
+
+@keyframes pulse-scroll {
+    from { background-position-x: 0; }
+    to   { background-position-x: -120px; } /* exatamente a largura de 1 "tile" do SVG */
+}
+
+/* --------------------------------------------
+   Formulário
+   -------------------------------------------- */
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-group label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+}
+
+/* Essa classe é a que o Django adiciona via
+   widget.attrs.update({'class': 'form-input'}) no forms.py */
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    background-color: var(--color-bg);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-input);
+
+    /* transition anima QUALQUER mudança nessas propriedades
+       (aqui: quando o :focus muda a borda/sombra abaixo) */
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input::placeholder {
+    color: #9CADAF;
+}
+
+.form-input:focus {
+    outline: none; /* removemos o outline padrão do navegador... */
+    border-color: var(--color-primary);
+    /* ...mas substituímos por um "glow" próprio, mantendo acessibilidade */
+    box-shadow: 0 0 0 4px rgba(56, 217, 169, 0.18);
+}
+
+/* Erros de validação do Django vêm como <ul class="errorlist"><li>...</li></ul> */
+.errorlist {
+    list-style: none;
+    color: var(--color-danger);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* --------------------------------------------
+   Botão
+   -------------------------------------------- */
+.btn-submit {
+    margin-top: 0.5rem;
+    padding: 0.85rem 1rem;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: white;
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--radius-input);
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn-submit:hover {
+    background-color: var(--color-primary-dark);
+}
+
+/* :active = enquanto o botão está sendo clicado.
+   O translateY dá uma micro-sensação de "afundar" o botão. */
+.btn-submit:active {
+    transform: translateY(1px);
+}
+
+/* --------------------------------------------
+   Rodapé do card ("Já tem uma conta?")
+   -------------------------------------------- */
+.auth-switch {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--color-ink-muted);
+}
+
+.auth-switch a {
+    font-weight: 600;
+}
+
+/* --------------------------------------------
+   Responsivo: em telas bem pequenas, reduz padding
+   -------------------------------------------- */
+@media (max-width: 420px) {
+    .auth-card {
+        padding: 3rem 1.25rem 1.5rem;
+    }
+}

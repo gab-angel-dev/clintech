@@ -1,0 +1,69 @@
+<div class="col" id="doctor-card-{{ doutor.pk }}">
+    <div class="doctor-card">
+
+        <div class="doctor-card-header">
+            <div class="doctor-avatar doctor-avatar-{{ doutor.pk|divisibleby:5|yesno:'5,1' }}">
+                {{ doutor.nome|slice:":2"|upper }}
+            </div>
+            <div class="doctor-title">
+                <h3 class="doctor-name">{{ doutor.nome }}</h3>
+                <p class="doctor-phone">{{ doutor.numero }}</p>
+            </div>
+            {% if doutor.ativo %}
+                <span class="doctor-status doctor-status-active"><i class="bi bi-circle-fill"></i> Ativo</span>
+            {% else %}
+                <span class="doctor-status doctor-status-inactive"><i class="bi bi-circle-fill"></i> Inativo</span>
+            {% endif %}
+        </div>
+
+        <div class="doctor-section">
+            <span class="doctor-section-label"><i class="bi bi-bandaid"></i> Procedimentos</span>
+            <div class="doctor-tags">
+                {% for procedimento in doutor.procedimentos.all %}
+                    <span class="doctor-tag">{{ procedimento.nome }}</span>
+                {% empty %}
+                    <span class="doctor-tag-empty">Nenhum procedimento vinculado</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="doctor-section">
+            <span class="doctor-section-label"><i class="bi bi-calendar3"></i> Dias</span>
+            <div class="doctor-days">
+                {% for numero, sigla in dias_semana_exibicao %}
+                    <span class="doctor-day {% if numero in doutor.dias_da_semana %}doctor-day-active{% endif %}">
+                        {{ sigla }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if doutor.convenio %}
+        <div class="doctor-section">
+            <div class="doctor-tags">
+                {% for convenio in doutor.convenio|slice:":3" %}
+                    <span class="doctor-tag doctor-tag-muted">{{ convenio }}</span>
+                {% endfor %}
+                {% if doutor.convenio|length > 3 %}
+                    <span class="doctor-tag doctor-tag-muted">+{{ doutor.convenio|length|add:"-3" }}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="doctor-card-footer">
+            <a href="{% url 'doutores:visualizar_doutor' doutor.pk %}" class="btn btn-light btn-sm flex-grow-1">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            <button type="button"
+                    class="btn btn-outline-secondary btn-sm doctor-toggle-btn"
+                    hx-post="{% url 'doutores:toggle_ativo' doutor.pk %}"
+                    hx-target="#doctor-card-{{ doutor.pk }}"
+                    hx-swap="outerHTML"
+                    title="{% if doutor.ativo %}Desativar{% else %}Ativar{% endif %}">
+                <i class="bi bi-slash-circle"></i>
+            </button>
+        </div>
+
+    </div>
+</div>

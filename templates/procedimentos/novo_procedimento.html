@@ -1,0 +1,38 @@
+{% extends 'home.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Novo Procedimento{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/procedimentos.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <a href="{% url 'procedimentos:procedimentos' %}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Procedimentos
+            </a>
+            <h1>Novo Procedimento</h1>
+        </div>
+    </div>
+
+    <div class="card form-card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a href="{% url 'procedimentos:procedimentos' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

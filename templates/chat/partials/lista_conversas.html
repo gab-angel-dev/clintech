@@ -1,0 +1,22 @@
+{% for paciente in pacientes %}
+<a href="{% url 'chat:conversa' paciente.phone_number %}"
+   class="chat-conversation-item {% if paciente == paciente_selecionado %}active{% endif %}">
+
+    <div class="chat-avatar flex-shrink-0">
+        {{ paciente.complete_name|slice:":2"|upper|default:"?" }}
+    </div>
+
+    <div class="chat-conversation-info">
+        <div class="d-flex justify-content-between">
+            <strong class="text-truncate">{{ paciente.complete_name|default:paciente.phone_number }}</strong>
+            <small class="text-muted flex-shrink-0 ms-1">{{ paciente.mensagens.last.created_at|date:"d/m" }}</small>
+        </div>
+        <small class="text-muted d-block">{{ paciente.phone_number }}</small>
+        <div class="chat-conversation-preview">
+            {{ paciente.mensagens.last.message.content|default:"" }}
+        </div>
+    </div>
+</a>
+{% empty %}
+<p class="text-muted text-center p-4 mb-0">Nenhuma conversa encontrada</p>
+{% endfor %}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    @page { size: A4; margin: 2cm; }
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #10242B; }
+    h1 { font-size: 20px; margin-bottom: 0; color: #073F3B; }
+    h3 { font-size: 14px; color: #073F3B; margin-top: 24px; }
+    .subtitle { color: #5C7075; margin-top: 4px; margin-bottom: 20px; }
+    .cards { display: flex; justify-content: space-between; margin-bottom: 24px; }
+    .card { border: 1px solid #DCE6E4; border-radius: 8px; padding: 10px 14px; width: 23%; text-align: center; }
+    .card .valor { font-size: 22px; font-weight: bold; color: #0B5D57; }
+    .card .label { font-size: 10px; color: #5C7075; }
+    .grafico { width: 100%; margin-bottom: 20px; page-break-inside: avoid; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #DCE6E4; padding: 6px 8px; font-size: 11px; text-align: left; }
+    th { background: #F4F8F7; color: #073F3B; }
+</style>
+</head>
+<body>
+    <h1>ClinTech — Relatório de Métricas</h1>
+    <p class="subtitle">Período: {{ start|date:"d/m/Y" }} a {{ end|date:"d/m/Y" }}</p>
+
+    <div class="cards">
+        <div class="card"><div class="valor">{{ summary.total_mensagens }}</div><div class="label">Total de Mensagens</div></div>
+        <div class="card"><div class="valor">{{ summary.total_usuarios }}</div><div class="label">Total de Usuários</div></div>
+        <div class="card"><div class="valor">{{ summary.total_agendamentos }}</div><div class="label">Agendamentos</div></div>
+        <div class="card"><div class="valor">{{ summary.media_msg_conversa }}</div><div class="label">Média Msg/Conversa</div></div>
+    </div>
+
+    <img class="grafico" src="data:image/png;base64,{{ grafico_mes }}" alt="Agendamentos por mês">
+    <img class="grafico" src="data:image/png;base64,{{ grafico_msg }}" alt="Mensagens por dia">
+    <img class="grafico" src="data:image/png;base64,{{ grafico_proc }}" alt="Distribuição de procedimentos">
+
+    <h3>Ranking de doutores</h3>
+    <table>
+        <tr><th>Doutor</th><th>Agendamentos</th></tr>
+        {% for d in doutores %}
+        <tr><td>{{ d.nome }}</td><td>{{ d.total_agendamentos }}</td></tr>
+        {% endfor %}
+    </table>
+
+    <h3>Agendamentos do período</h3>
+    <table>
+        <tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Procedimento</th><th>Doutor</th></tr>
+        {% for ag in agendamentos %}
+        <tr>
+            <td>{{ ag.start_time|date:"d/m/Y" }}</td>
+            <td>{{ ag.start_time|date:"H:i" }}</td>
+            <td>{{ ag.paciente.complete_name|default:"Paciente removido" }}</td>
+            <td>{{ ag.procedimento.nome }}</td>
+            <td>{{ ag.doutor.nome }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{% for msg in mensagens %}
+    {% include 'chat/partials/mensagem_unica.html' %}
+{% empty %}
+    <p class="text-muted text-center">Nenhuma mensagem ainda</p>
+{% endfor %}

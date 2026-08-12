@@ -1,0 +1,66 @@
+{% extends 'home.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Novo Doutor{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/doutores.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <a href="{% url 'doutores:doutores' %}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Doutores
+            </a>
+            <h1>Novo Doutor</h1>
+        </div>
+    </div>
+
+    <div class="card form-card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form.nome|as_crispy_field }}
+                {{ form.numero|as_crispy_field }}
+                {{ form.calendar_id|as_crispy_field }}
+                {{ form.duracao|as_crispy_field }}
+                {{ form.convenio|as_crispy_field }}
+                {{ form.ativo|as_crispy_field }}
+                {{ form.procedimentos|as_crispy_field }}
+                {{ form.dias_da_semana|as_crispy_field }}
+
+                <div class="horario-trabalho-group border rounded p-3 mb-3">
+                    <h6 class="mb-3">Horário de Trabalho</h6>
+
+                    <div class="row mb-2">
+                        <label class="col-form-label col-sm-2">Manhã</label>
+                        <div class="col-sm-5">{{ form.manha_inicio|as_crispy_field }}</div>
+                        <div class="col-sm-5">{{ form.manha_fim|as_crispy_field }}</div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-form-label col-sm-2">Tarde</label>
+                        <div class="col-sm-5">{{ form.tarde_inicio|as_crispy_field }}</div>
+                        <div class="col-sm-5">{{ form.tarde_fim|as_crispy_field }}</div>
+                    </div>
+                </div>
+
+                {{ form.restricao|as_crispy_field }}
+                {{ form.non_field_errors }}
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a href="{% url 'doutores:doutores' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Salvar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

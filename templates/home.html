@@ -1,0 +1,153 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
+            integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
+            crossorigin="anonymous"></script>
+
+    <title>{% block title %}ClinTech{% endblock %}</title>
+</head>
+
+<body>
+    <div class="layout">
+
+        <nav class="sidebar" id="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <div class="sidebar-brand">
+                        <i class="bi bi-heart-pulse-fill"></i>
+                        <span>ClinTech</span>
+                    </div>
+                    <button type="button" class="sidebar-toggle" id="sidebarToggle" title="Retrair/expandir menu">
+                        <i class="bi bi-layout-sidebar-inset"></i>
+                    </button>
+                </div>
+
+                <div class="sidebar-links">
+                    <a href="{% url 'home:metricas' %}"
+                       class="sidebar-link {% if request.resolver_match.namespace == 'home' %}active{% endif %}"
+                       title="Dashboard">
+                        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+                    </a>
+                    <a href="{% url 'pacientes:pacientes' %}"
+                       class="sidebar-link {% if request.resolver_match.namespace == 'pacientes' %}active{% endif %}"
+                       title="Pacientes">
+                        <i class="bi bi-people"></i><span>Pacientes</span>
+                    </a>
+                    <a href="{% url 'chat:chat' %}"
+                       class="sidebar-link {% if request.resolver_match.namespace == 'chat' %}active{% endif %}"
+                       title="Chat de Conversas">
+                        <i class="bi bi-chat-dots"></i><span>Chat de Conversas</span>
+                    </a>
+                    <a href="{% url 'doutores:doutores' %}"
+                       class="sidebar-link {% if request.resolver_match.namespace == 'doutores' %}active{% endif %}"
+                       title="Doutores">
+                        <i class="bi bi-clipboard2-pulse"></i><span>Doutores</span>
+                    </a>
+                    <a href="{% url 'procedimentos:procedimentos' %}"
+                       class="sidebar-link {% if request.resolver_match.namespace == 'procedimentos' %}active{% endif %}"
+                       title="Procedimentos">
+                        <i class="bi bi-bandaid"></i><span>Procedimentos</span>
+                    </a>
+                    <a href="{% url 'agenda:agenda' %}"
+                       class="sidebar-link {% if request.resolver_match.namespace == 'agenda' %}active{% endif %}"
+                       title="Agenda">
+                        <i class="bi bi-calendar3"></i><span>Agenda</span>
+                    </a>
+                    <a href="{% url 'arquivos:arquivos' %}"
+                       class="sidebar-link {% if request.resolver_match.namespace == 'arquivos' %}active{% endif %}"
+                       title="Arquivos">
+                        <i class="bi bi-folder2-open"></i><span>Arquivos</span>
+                    </a>
+                    <a href="{% url 'equipe:equipe' %}"
+                       class="sidebar-link {% if request.resolver_match.namespace == 'equipe' %}active{% endif %}"
+                       title="Equipe">
+                        <i class="bi bi-person-badge"></i><span>Equipe</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="baseboard">
+                <div class="perfil" title="{{ request.user.get_full_name|default:request.user.username }}">
+                    <div class="perfil-avatar">{{ request.user.first_name|first|default:"U"|upper }}</div>
+                    <div class="perfil-info">
+                        <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                        <small>{{ request.user.email }}</small>
+                    </div>
+                </div>
+
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-link btn btn-link p-2 w-100 text-start border-0" title="Sair">
+                        <i class="bi bi-box-arrow-right"></i><span>Sair</span>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <main class="content">
+            {% block content %}
+            {% endblock %}
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // ---- Retrair/expandir sidebar, lembrando a preferência no navegador ----
+    (function () {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+
+        function applySidebarState() {
+            const isMobile = window.innerWidth < 768;
+            const collapsed = isMobile ? true : localStorage.getItem('sidebarCollapsed') === 'true';
+            sidebar.classList.toggle('is-collapsed', collapsed);
+        }
+        applySidebarState();
+
+        toggleBtn.addEventListener('click', function () {
+            const collapsed = sidebar.classList.toggle('is-collapsed');
+            localStorage.setItem('sidebarCollapsed', collapsed);
+        });
+
+        window.addEventListener('resize', applySidebarState);
+    })();
+    </script>
+
+    <script>
+    // ---- htmx ----
+    document.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = getCookie('csrftoken');
+    });
+
+    document.addEventListener('htmx:beforeSwap', function (event) {
+        const status = event.detail.xhr.status;
+        if ([400, 409, 422, 502, 503].includes(status)) {
+            event.detail.shouldSwap = true;
+        }
+    });
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,40 @@
+{% extends 'home.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pacientes.css' %}">
+{% endblock %}
+{% block title %}{{ paciente.complete_name|default:"Paciente" }}{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <a href="{% url 'pacientes:pacientes' %}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Pacientes
+            </a>
+            <h1>{{ paciente.complete_name|default:"Paciente sem nome" }}</h1>
+            <p class="page-subtitle">{{ paciente.phone_number }}</p>
+        </div>
+    </div>
+
+    <div class="card form-card">
+        <div class="card-header">
+            <h2 class="h6 mb-0">Editar dados</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Salvar alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

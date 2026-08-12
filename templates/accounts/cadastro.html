@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    <title>ClinTech</title>
+
+</head>
+<body>
+    <main class="auth-page">
+        <h1 class="auth-title">ClinTech</h1>
+        <div class="auth-card">
+            <form action="{% url 'accounts:cadastro' %}" method="post">
+                {% csrf_token %}
+    
+                {{ form.non_field_errors }}
+
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">Nome do Usuário</label>
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email</label>
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}">Senha</label>
+                    {{ form.password1 }}
+                    {{ form.password1.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}">Confirmar Senha</label>
+                    {{ form.password2 }}
+                    {{ form.password2.errors }}
+                </div>
+
+                <button type="submit" class="btn-submit">Cadastrar</button>
+
+            </form>
+
+            <p class="auth-switch">
+                Já tem uma conta? <a href="{% url 'accounts:login' %}">Faça login</a>
+            </p>
+
+        </div>
+    </main>
+</body>
+</html>

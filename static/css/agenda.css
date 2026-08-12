@@ -1,0 +1,228 @@
+/* ---- Toolbar do calendário ---- */
+.agenda-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.agenda-toolbar .btn-outline-secondary {
+    color: var(--color-ink-muted);
+    border-color: var(--color-border);
+}
+
+.agenda-toolbar .btn-outline-secondary.active,
+.agenda-toolbar .btn-outline-secondary:hover {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #fff !important;
+}
+
+.agenda-cal-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.agenda-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.agenda-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    color: var(--color-ink-muted);
+}
+
+.agenda-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.agenda-doctor-filter {
+    margin-left: auto;
+    width: auto;
+    min-width: 200px;
+}
+
+/* ---- Card do calendário ---- */
+.agenda-calendar-card {
+    padding: 20px;
+}
+
+#calendar {
+    min-height: 600px;
+}
+
+/* Overrides do FullCalendar pra bater com a paleta */
+.fc {
+    font-family: var(--font-body);
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+    border-color: var(--color-border);
+}
+
+.fc-daygrid-day-number,
+.fc-col-header-cell-cushion {
+    color: var(--color-ink);
+    text-decoration: none;
+}
+
+.fc-day-today {
+    background-color: rgba(11, 93, 87, 0.06) !important;
+}
+
+.fc-event {
+    border-radius: 6px;
+    font-size: 0.78rem;
+    cursor: pointer;
+}
+
+/* ---- Formulário de agendamento ---- */
+.agenda-form-card {
+    padding: 8px;
+}
+
+.agenda-search-results {
+    position: relative;
+    z-index: 5;
+}
+
+.agenda-search-list {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-input);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.agenda-selected-patient {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-input);
+    background-color: rgba(11, 93, 87, 0.06);
+    border: 1px solid rgba(11, 93, 87, 0.2);
+    font-size: 0.88rem;
+}
+
+.agenda-clear-patient {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--color-ink-muted);
+    display: flex;
+}
+
+.agenda-clear-patient:hover {
+    color: var(--color-danger);
+}
+
+/* ---- Modal de detalhe do evento ---- */
+.modal-content {
+    border-radius: var(--radius-card);
+    border: none;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--color-border);
+    align-items: flex-start;
+}
+
+.agenda-detail-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-muted);
+    margin-bottom: 2px;
+}
+
+.agenda-detail-value {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.agenda-detail-notes {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-input);
+    padding: 12px;
+}
+
+/* ---- Estados de sucesso/erro ---- */
+.agenda-success-icon {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+}
+
+.agenda-error-icon {
+    font-size: 2.5rem;
+    color: var(--color-danger);
+}
+
+/* ---- Disponibilidade ---- */
+.agenda-availability {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-input);
+    font-size: 0.85rem;
+    border: 1px solid;
+}
+
+.agenda-availability-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.agenda-availability-ok {
+    background-color: rgba(56, 217, 169, 0.12);
+    border-color: rgba(56, 217, 169, 0.35);
+    color: var(--color-primary-dark);
+}
+
+.agenda-availability-ok .agenda-availability-dot {
+    background-color: var(--color-pulse);
+}
+
+.agenda-availability-conflict {
+    background-color: rgba(192, 57, 43, 0.08);
+    border-color: rgba(192, 57, 43, 0.3);
+    color: var(--color-danger);
+}
+
+.agenda-availability-conflict .agenda-availability-dot {
+    background-color: var(--color-danger);
+}
+
+.status-badge-pending {
+    background-color: rgba(250, 199, 117, 0.28);
+    color: #854F0B;
+}
+
+.status-badge-confirmed {
+    background-color: rgba(56, 217, 169, 0.18);
+    color: var(--color-primary-dark);
+}
+
+.status-badge-cancelled {
+    background-color: rgba(192, 57, 43, 0.1);
+    color: var(--color-danger);
+}

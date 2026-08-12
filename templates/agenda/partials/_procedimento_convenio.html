@@ -1,0 +1,25 @@
+<div>
+    <label class="form-label">Procedimento *</label>
+    <select name="procedimento" id="id_procedimento" required
+            class="form-select"
+            onchange="atualizarFimAutomatico()">
+        <option value="">---------</option>
+        {% for p in form.fields.procedimento.queryset %}
+            <option value="{{ p.pk }}"
+                    data-duracao="{{ p.duracao_minuto }}"
+                    {% if form.procedimento.value|stringformat:"s" == p.pk|stringformat:"s" %}selected{% endif %}>
+                {{ p.nome }} ({{ p.duracao_minuto }}min)
+            </option>
+        {% endfor %}
+    </select>
+    {% if form.procedimento.errors %}
+        <div class="invalid-feedback d-block">{{ form.procedimento.errors.0 }}</div>
+    {% endif %}
+</div>
+<div class="mt-3">
+    <label class="form-label">Convênio</label>
+    {{ form.convenio_utilizado }}
+    {% if form.convenio_utilizado.errors %}
+        <div class="invalid-feedback d-block">{{ form.convenio_utilizado.errors.0 }}</div>
+    {% endif %}
+</div>

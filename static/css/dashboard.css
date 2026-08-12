@@ -1,0 +1,117 @@
+/* ---- Filtros de período ---- */
+.dashboard-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dashboard-period-select,
+.dashboard-date-input {
+    width: auto;
+}
+
+/* ---- Cards de métrica ---- */
+.metric-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+}
+
+.metric-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background-color: rgba(11, 93, 87, 0.09);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.metric-value {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.metric-label {
+    color: var(--color-ink-muted);
+    font-size: 0.8rem;
+    margin: 2px 0 0;
+}
+
+/* Variação compacta (usada em Custos, 5 por linha) */
+.metric-card-sm {
+    display: block;
+    text-align: center;
+    padding: 16px;
+}
+
+.metric-value-sm {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    margin: 0 0 2px;
+}
+
+/* ---- Cards de gráfico ---- */
+.chart-card {
+    padding: 20px;
+}
+
+.chart-card-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    margin-bottom: 14px;
+}
+
+/* ---- Ranking de doutores ---- */
+.ranking-row {
+    margin-bottom: 16px;
+}
+
+.ranking-row:last-child {
+    margin-bottom: 0;
+}
+
+.ranking-name {
+    font-weight: 500;
+    font-size: 0.88rem;
+}
+
+.ranking-value {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-ink-muted);
+}
+
+.ranking-progress {
+    height: 6px;
+    background-color: var(--color-bg);
+    border-radius: 999px;
+}
+
+.ranking-progress-bar {
+    background-color: var(--color-primary);
+    border-radius: 999px;
+}
+
+/* ---- Container com altura travada para os canvas do Chart.js ---- */
+.chart-canvas-wrap {
+    position: relative;
+    height: 220px;
+}
+
+.chart-canvas-wrap-lg {
+    height: 460px;
+}

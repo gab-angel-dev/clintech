@@ -1,0 +1,38 @@
+/* ---- Detalhe de embedding ---- */
+.embedding-meta {
+    display: flex;
+    gap: 40px;
+    margin: 0;
+}
+
+.embedding-meta dt {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-muted);
+    margin-bottom: 4px;
+}
+
+.embedding-meta dd {
+    font-weight: 600;
+    margin: 0;
+}
+
+.embedding-content-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+}
+
+.embedding-content {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-input);
+    padding: 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

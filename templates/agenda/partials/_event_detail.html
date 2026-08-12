@@ -1,0 +1,64 @@
+<div class="modal-header">
+    <div>
+        <h2 class="h6 mb-0">{{ agendamento.procedimento.nome }}</h2>
+        <small class="text-muted">ID: {{ agendamento.event_id|truncatechars:12 }}</small>
+    </div>
+
+    {% if agendamento.status == 'pending' %}
+        <span class="status-badge status-badge-pending"><i class="bi bi-circle-fill"></i> {{ agendamento.get_status_display }}</span>
+    {% elif agendamento.status == 'confirmed' %}
+        <span class="status-badge status-badge-confirmed"><i class="bi bi-circle-fill"></i> {{ agendamento.get_status_display }}</span>
+    {% elif agendamento.status == 'canceled' %}
+        <span class="status-badge status-badge-cancelled"><i class="bi bi-circle-fill"></i> {{ agendamento.get_status_display }}</span>
+    {% else %}
+        <span class="status-badge status-badge-inactive"><i class="bi bi-circle-fill"></i> {{ agendamento.get_status_display }}</span>
+    {% endif %}
+
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+</div>
+
+<div class="modal-body">
+    <div class="row g-3 mb-3">
+        <div class="col-6">
+            <p class="agenda-detail-label">Paciente</p>
+            <p class="agenda-detail-value">{{ agendamento.paciente.complete_name|default:"Paciente removido" }}</p>
+        </div>
+        <div class="col-6">
+            <p class="agenda-detail-label">Doutor</p>
+            <p class="agenda-detail-value">{{ agendamento.doutor.nome }}</p>
+        </div>
+        <div class="col-6">
+            <p class="agenda-detail-label">Data</p>
+            <p class="agenda-detail-value">{{ agendamento.start_time|date:"d/m/Y" }}</p>
+        </div>
+        <div class="col-6">
+            <p class="agenda-detail-label">Horário</p>
+            <p class="agenda-detail-value">{{ agendamento.start_time|date:"H:i" }} – {{ agendamento.end_time|date:"H:i" }}</p>
+        </div>
+        {% if agendamento.convenio_utilizado %}
+        <div class="col-6">
+            <p class="agenda-detail-label">Convênio</p>
+            <p class="agenda-detail-value">{{ agendamento.convenio_utilizado }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if agendamento.observacoes %}
+    <div class="agenda-detail-notes">
+        <p class="agenda-detail-label mb-1">Observações</p>
+        <p class="mb-0">{{ agendamento.observacoes }}</p>
+    </div>
+    {% endif %}
+</div>
+
+{% if agendamento.is_cancelavel %}
+<div class="modal-footer">
+    <button hx-post="{% url 'agenda:cancel' agendamento.event_id %}"
+            hx-confirm="Cancelar esta consulta?"
+            hx-target="#event-modal-content"
+            hx-swap="innerHTML"
+            class="btn btn-outline-danger w-100">
+        <i class="bi bi-x-circle"></i> Cancelar consulta
+    </button>
+</div>
+{% endif %}

@@ -1,0 +1,43 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}{{ embedding.arquivo.nome_arquivo }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/arquivos.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <a href="{% url 'arquivos:embeddings' %}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Embeddings
+            </a>
+            <h1>{{ embedding.arquivo.nome_arquivo }}</h1>
+        </div>
+    </div>
+
+    <div class="page-card">
+        <div class="card-body p-4">
+
+            <dl class="embedding-meta">
+                <div>
+                    <dt>Categoria</dt>
+                    <dd>{{ embedding.categoria|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Data de criação</dt>
+                    <dd>{{ embedding.created_at|date:"d/m/Y" }}</dd>
+                </div>
+            </dl>
+
+            <hr>
+
+            <h2 class="h6 text-uppercase text-muted embedding-content-label">Conteúdo</h2>
+            <p class="embedding-content">{{ embedding.conteudo }}</p>
+
+        </div>
+    </div>
+
+{% endblock %}

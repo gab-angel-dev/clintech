@@ -1,0 +1,37 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Doutores{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/doutores.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <div>
+            <h1>Doutores</h1>
+            <p class="page-subtitle">
+                {{ doutores_ativos_count|default:doutores|length }} ativos · {{ doutores|length }} total
+            </p>
+        </div>
+        <a href="{% url 'doutores:novo_doutor' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Novo Doutor
+        </a>
+    </div>
+
+    {% if doutores %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+            {% for doutor in doutores %}
+                {% include 'doutores/partials/doutor_card.html' %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="bi bi-clipboard2-pulse"></i>
+            <p>Nenhum doutor cadastrado</p>
+        </div>
+    {% endif %}
+
+{% endblock %}
