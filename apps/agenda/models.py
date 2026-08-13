@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.db.models.functions import Now
 from apps.doutores.models import Doutor
 from apps.procedimentos.models import Procedimento
 from apps.pacientes.models import Pacientes
@@ -52,8 +52,8 @@ class Agendamento(models.Model):
 
     observacoes = models.TextField(blank=True, null=False)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(db_default=Now())
+    updated_at = models.DateTimeField(db_default=Now())
 
     class Meta:
         db_table = 'agendamentos'

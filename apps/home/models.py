@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.functions import Now
 from apps.pacientes.models import Pacientes
 
 
@@ -16,7 +17,7 @@ class TokenUsage(models.Model):
     total_tokens = models.IntegerField()
     model_name = models.CharField(max_length=200, null=True, blank=True)
     provider = models.CharField(max_length=100, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(db_default=Now())
 
     class Meta:
         db_table = "token_usage"
