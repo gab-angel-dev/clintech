@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'apps.procedimentos',
     'apps.agenda',
     'apps.arquivos',
-    'apps.equipe'
+    'apps.equipe',
+    'apps.migration'
     
 ]
 

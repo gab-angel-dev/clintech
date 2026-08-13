@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.functions import Now
 
 class Pacientes(models.Model):
     phone_number = models.CharField(primary_key=True, max_length=13, null=False, verbose_name='Número de Contato')
@@ -9,8 +10,8 @@ class Pacientes(models.Model):
     cpf = models.CharField(max_length=11, unique=True, null=True, blank=True)
     convenio = models.TextField(null=False, blank=True)
     metadata = models.JSONField(default=dict, null=False, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(db_default=Now())
+    updated_at = models.DateTimeField(db_default=Now())
 
     class Meta:
         db_table = 'pacientes'

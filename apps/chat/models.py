@@ -1,6 +1,6 @@
 from django.db import models
 from apps.pacientes.models import Pacientes
-
+from django.db.models.functions import Now
 
 class Chat(models.Model):
     session_id = models.ForeignKey(
@@ -13,7 +13,7 @@ class Chat(models.Model):
     sender = models.CharField(max_length=20, null=True, blank=True)
     agent_name = models.CharField(max_length=50, null=True, blank=True)
     message = models.JSONField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(db_default=Now())
 
     class Meta:
         db_table = 'chat'
