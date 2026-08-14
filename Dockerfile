@@ -1,5 +1,3 @@
-# Dockerfile
-
 FROM python:3.10-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -22,8 +20,8 @@ RUN pip install --no-cache-dir gunicorn
 
 COPY . .
 
-RUN python manage.py collectstatic --noinput
+RUN chmod +x entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "core.wsgi:application"]
+ENTRYPOINT ["./entrypoint.sh"]
