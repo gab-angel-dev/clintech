@@ -219,5 +219,6 @@ __marimo__/
 
 # Generated using ignr.py - github.com/Antrikshy/ignr.py
 
+.env.prod
 media/
 anotacoes.txt
