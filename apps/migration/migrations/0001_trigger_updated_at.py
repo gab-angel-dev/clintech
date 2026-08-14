@@ -47,17 +47,14 @@ def remover_triggers(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        # Django precisa saber que essa migration roda DEPOIS das
-        # migrations que já criaram essas tabelas — senão o trigger
-        # tentaria se conectar a uma tabela que ainda não existe.
         ("accounts", "0001_initial"),
         ("agenda", "0001_initial"),
         ("arquivos", "0001_initial"),
         ("chat", "0001_initial"),
         ("doutores", "0001_initial"),
         ("home", "0001_initial"),
-        ("pacientes", "0001_initial"),
-        ("procedimentos", "0001_initial"),
+        ("pacientes", "0003_alter_pacientes_created_at_and_more"),
+        ("procedimentos", "0005_alter_procedimento_triagem"),
     ]
 
     operations = [
