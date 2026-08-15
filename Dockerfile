@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir gunicorn
 
 COPY . .
 
-RUN chmod +x entrypoint.sh
+RUN chmod +x entrypoint.sh entrypoint-worker.sh
 
 EXPOSE 8000
 
